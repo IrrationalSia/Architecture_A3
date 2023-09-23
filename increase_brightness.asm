@@ -1,153 +1,107 @@
 .data
-
-filename: .asciiz "/home/m/mphsiy010/Documents/sample_images/house_64_in_ascii_cr.ppm" 
-outputfilename: .asciiz "/home/m/mphsiy010/Documents/file.ppm" 
-buffer: .space 1024 
-newline: .asciiz "\n" 
-textMessage: .asciiz "Average pixel value of the original image:\n"
-textMessage2: .asciiz "\nAverage pixel value of new image:\n"
-numPixels: .word 4096
-
-sumOriginal: .word 0
-sumNew: .word 0
-count: .word 0
+filename: .asciiz "/home/m/mphsiy010/Documents/sample_images/house_64_in_ascii_cr.ppm"
+outputfilename: .asciiz "/home/m/mphsiy010/Documents/output.ppm"
+msgOriginal: .asciiz "Average pixel value of the original image:\n "
+msgNew: .asciiz "\nAverage pixel value of the new image:\n"
+errorMsg: .asciiz "Error occurred.\n"
+readByte: .byte 0  # <---- This line declares space for one byte
 
 .text
 main:
-    # Open the input file for reading.
+    # Initialize Variables
+    li $t0, 0  # Original Sum
+    li $t1, 0  # New Sum
+    li $t2, 0  # Pixel Counter
+    li $t9, 30000  # Total Pixel Count (Assuming 100x100x3 image for example)
+    
+    # Open the input file
     li $v0, 13
     la $a0, filename
-    li $a1, 0
-    li $a2, 0
+    li $a1, 0  # read-only
+    li $a2, 0  # mode is ignored
     syscall
-    move $s0, $v0  # Input file descriptor.
-
-    # Open the output file for writing.
+    bltz $v0, errorExit
+    move $s6, $v0
+    
+    # Open the output file
     li $v0, 13
     la $a0, outputfilename
-    li $a1, 1
-    li $a2, 0
+    li $a1, 1  # write-only
+    li $a2, 0  # mode is ignored
     syscall
-    move $s1, $v0  # Output file descriptor.
+    bltz $v0, errorExit
+    move $s7, $v0
     
-    # Read the header
-    # For the purpose of this example, let's assume it's a simple read and write, adjust based on the actual ppm header format
+    j process_pixels
+    
+process_pixels:
+    beq $t2, $t9, compute_average
+    
+    # Read an RGB value from input file
     li $v0, 14
-    move $a0, $s0
-    la $a1, buffer
-    li $a2, 1024
+    move $a0, $s6
+    la $a1, readByte  # <---- Load the address of readByte into $a1
+    li $a2, 1
     syscall
+    bltz $v0, readErrorExit
     
-    # Write the header to the output file.
+    lb $t4, readByte  # <---- Load the byte from the address of readByte
+    add $t0, $t0, $t4
+    addi $t4, $t4, 10  # Increase brightness
+    
+    # Write modified RGB value to output file
+     # Write modified RGB value to output file
     li $v0, 15
-    move $a0, $s1
-    la $a1, buffer
-    li $a2, 1024
+    move $a0, $s7
+    sb $t4, readByte  # <---- Store the byte to the address of readByte
+    li $a2, 1
     syscall
+    bltz $v0, writeErrorExit
+    add $t1, $t1, $t4
+    addi $t2, $t2, 1
+    j process_pixels
     
-    # Read and process pixel data.
-readPixels:
-    li $v0, 14
-    move $a0, $s0
-    la $a1, buffer
-    li $a2, 3
-    syscall
+compute_average:
+    # Convert to float and calculate the average
+    mtc1 $t0, $f0
+    mtc1 $t1, $f1
+    mtc1 $t9, $f2
     
-    # Check if the end of the file has been reached.
-    beqz $v0, endRead
+    cvt.s.w $f0, $f0
+    cvt.s.w $f1, $f1
+    cvt.s.w $f2, $f2
     
-    # Load RGB values.
-    lb $t0, buffer     # R
-    lb $t1, buffer+1   # G
-    lb $t2, buffer+2   # B
+    div.s $f0, $f0, $f2
+    div.s $f1, $f1, $f2
     
-    # Update sumOriginal
-    add $t3, $t0, $t1
-    add $t3, $t3, $t2
-    lw $t4, sumOriginal
-    add $t4, $t4, $t3
-    sw $t4, sumOriginal
-    
-    # Increment and clamp RGB values.
-    li $t5, 255
-    addi $t0, $t0, 10
-    addi $t1, $t1, 10
-    addi $t2, $t2, 10
-    bgt $t0, $t5, setRTo255
-    j continueR
-setRTo255:
-    move $t0, $t5
-continueR:
-    bgt $t1, $t5, setGTo255
-    j continueG
-setGTo255:
-    move $t1, $t5
-continueG:
-    bgt $t2, $t5, setBTo255
-    j continueB
-setBTo255:
-    move $t2, $t5
-continueB:
-    
-    # Update sumNew
-    add $t3, $t0, $t1
-    add $t3, $t3, $t2
-    lw $t4, sumNew
-    add $t4, $t4, $t3
-    sw $t4, sumNew
-    
-    # Write the modified pixel values to the output file.
-    sb $t0, buffer
-    sb $t1, buffer+1
-    sb $t2, buffer+2
-    li $v0, 15
-    move $a0, $s1
-    la $a1, buffer
-    li $a2, 3
-    syscall
-    
-    # Increment pixel count.
-    lw $t3, count
-    addi $t3, $t3, 1
-    sw $t3, count
-    
-    # Read the next pixel.
-    j readPixels
-    
-endRead:
-    # Close the input file.
-    li $v0, 16
-    move $a0, $s0
-    syscall
-    
-    # Close the output file.
-    li $v0, 16
-    move $a0, $s1
-    syscall
-    
-    # Calculate and display averages.
-    lw $t0, sumOriginal
-    lw $t1, count
-    divu $t0, $t1
-    mflo $t0  # Original Average
     li $v0, 4
-    la $a0, textMessage
+    la $a0, msgOriginal
     syscall
-    li $v0, 1
-    move $a0, $t0
+    li $v0, 2
+    mov.s $f12, $f0
     syscall
     
-    lw $t0, sumNew
-    lw $t1, count
-    divu $t0, $t1
-    mflo $t0  # New Average
     li $v0, 4
-    la $a0, textMessage2
+    la $a0, msgNew
     syscall
-    li $v0, 1
-    move $a0, $t0
+    li $v0, 2
+    mov.s $f12, $f1
     syscall
     
-    # End the program.
+exit:
     li $v0, 10
     syscall
+    
+errorExit:
+    li $v0, 4
+    la $a0, errorMsg
+    syscall
+    j exit
+    
+readErrorExit:
+    #For Debugging purposes
+    j exit
+    
+writeErrorExit:
+    # Debug write
+    j exit
