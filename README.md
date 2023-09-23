@@ -14,6 +14,8 @@ This repository contains MIPS assembly programs designed to perform image proces
 - [Usage](#usage)
   - [Greyscale Conversion](#greyscale-conversion)
   - [Pixel Average Adjustment](#increase-brightness)
+- [Constraints] (#constraints)
+- [Acknowledgements] (#acknowledgements)
 
 ## Getting Started
 
@@ -34,5 +36,18 @@ Run the program.
 Increase Brightness
 pixel_average.asm reads an image and adjusts its pixel values by a fixed amount, then prints the average pixel value of the original and the new image.
 
-Load pixel_average.asm in the MIPS simulator.
+Load increase_brightness.asm in the MIPS simulator.
 Run the program.
+
+Specifications and constraints
+The provided input image will always be 64x64 pixels in size.
+The specified form will always be used for the input image header.
+Services 13 and 14 of MIPS must be used separately.
+After performing the read/write operations, all files must be closed using service 16.
+RGB values will be between [0, 255].
+The end-of-line character may differ depending on the operating system ([LF] for Linux and QtSpim, [CR] for Mac, and [CR][LF] for Windows).
+Contributions are always welcome! Please refer to the above-mentioned contributing guidelines.
+
+Acknowledgments
+QtSPIM Simulator allows MIPS Assembly programs to be executed.
+GIMP for making a free and open-source raster graphics editor available.
