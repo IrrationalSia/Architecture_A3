@@ -2,32 +2,37 @@
 Hi! This is my repository for an assignment comprising of 2 parts that are not really related.
 We are working with MIPS assembly language
 
-Part One: increase_brightness.asm
-This part of the program is meant to read a PPM image file,
-modify the pixel values by increasing each RGB value by 10, 
-and then write the modified image to a new file. 
+ MIPS Image Processing Programs
 
-Currently fixing:
+This repository contains MIPS assembly programs designed to perform image processing tasks, specifically:
+1. Converting a color PPM P3 image to a greyscale PPM P2 image (`greyscale.asm`).
+2. Calculating and adjusting the average pixel value of a given image (`increase_brightness.asm`).
 
-Average pixel value of the original image:
-481
-Average pixel value of new image:
-2953
--- program is finished running --
+## Table of Contents
+- [Getting Started](#getting-started)
+- [Prerequisites](#prerequisites)
+- [Usage](#usage)
+  - [Greyscale Conversion](#greyscale-conversion)
+  - [Pixel Average Adjustment](#increase-brightness)
 
-Average pixel value of the original image:124Average pixel value of new image:154
--- program is finished running --
+## Getting Started
 
-Average pixel value of the original image:
-124
-Average pixel value of new image:
-154
--- program is finished running --
+1. Clone the repository:
+sh git clone (https://github.com/IrrationalSia/Architecture_A3)
+Navigate to the project directory:
+sh cd Architecture_A3
 
-Average pixel value of the original image:
-2.327E-321
-Average pixel value of new image:
-2.885E-321
--- program is finished running --
+2. Prerequisites
+A MIPS Simulator like SPIM, Mars or QtSpim is required to run the assembly programs.
+Ensure that input file paths in the programs are correctly set and that appropriate permissions are configured.
+3. Usage
+Greyscale Conversion
+greyscale.asm reads a color PPM P3 image and converts it to a greyscale PPM P2 image by calculating the average of its RGB values.
 
-Part Two: .asm
+Load greyscale.asm in the MIPS simulator.
+Run the program.
+Increase Brightness
+pixel_average.asm reads an image and adjusts its pixel values by a fixed amount, then prints the average pixel value of the original and the new image.
+
+Load pixel_average.asm in the MIPS simulator.
+Run the program.
