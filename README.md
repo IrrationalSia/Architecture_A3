@@ -29,16 +29,18 @@ Install a MIPS Simulator like SPIM to run the assembly programs.
 Install an image editor such as GIMP to view the PPM files or use a text editor to view the characters in PPM files.
 Ensure the input file paths in the programs are correctly set with absolute paths and that appropriate permissions are configured.
 3. Usage
-Greyscale Conversion
-greyscale.asm reads a color PPM P3 image and converts it to a greyscale PPM P2 image by calculating the average of its RGB values.
+Filenames and headers are hardcoded.
+You can hardcode the image headers and filenames in the provided MIPS assembly files. Absolute paths should be used for the filenames. Replace the line in the code that specifies the filename with the desired absolute path. Make sure to properly comment your code.
+ Greyscale Conversion
+ greyscale.asm reads a color PPM P3 image and converts it to a greyscale PPM P2 image by calculating the average of its RGB values.
 
-Load greyscale.asm in the MIPS simulator.
-Run the program.
-Increase Brightness
-pixel_average.asm reads an image and adjusts its pixel values by a fixed amount, then prints the average pixel value of the original and the new image.
+ Load greyscale.asm in the MIPS simulator.
+ Run the program.
+ Increase Brightness
+ pixel_average.asm reads an image and adjusts its pixel values by a fixed amount, then prints the average pixel value of the original and the new image.
 
-Load increase_brightness.asm in the MIPS simulator.
-Run the program.
+ Load increase_brightness.asm in the MIPS simulator.
+ Run the program.
 
 Specifications and constraints
 The provided input image will always be 64x64 pixels in size.
