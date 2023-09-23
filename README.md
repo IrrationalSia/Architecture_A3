@@ -25,8 +25,9 @@ Navigate to the project directory:
 sh cd Architecture_A3
 
 2. Prerequisites
-A MIPS Simulator like SPIM, Mars or QtSpim is required to run the assembly programs.
-Ensure that input file paths in the programs are correctly set and that appropriate permissions are configured.
+Install a MIPS Simulator like SPIM to run the assembly programs.
+Install an image editor such as GIMP to view the PPM files or use a text editor to view the characters in PPM files.
+Ensure the input file paths in the programs are correctly set with absolute paths and that appropriate permissions are configured.
 3. Usage
 Greyscale Conversion
 greyscale.asm reads a color PPM P3 image and converts it to a greyscale PPM P2 image by calculating the average of its RGB values.
